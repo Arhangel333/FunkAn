@@ -1,0 +1,42 @@
+let builtin x eps = 
+    let rec loop i sum =
+        let step = (pown -1.0 i) * (cos(float i * x) / float (i * i))
+        if (abs step < eps) then sum, i
+        else
+            loop (i + 1) (step + sum)
+    loop 1 0.0
+let taylor_naive x eps =
+    let rec loop i sum =
+        // Ввели pown в качестве встроенной функции
+        let step = (pown -1.0 i) * (cos(float i * x) / float (i * i))
+        //printfn "i = %d, sum = %f, step = %f" i sum step
+        if (abs step < eps) then sum, i
+        else
+            
+            // Показываем для отладки значение каждого члена ряда
+            //printfn "i = %d, sum = %f, step = %f" i sum step
+            //printfn "dumb"
+            loop (i + 1) (step + sum)
+    loop 1 0.0
+
+let taylor_smart x eps =
+    let rec loop i term sum =
+        let step = (pown -1.0 i) * (cos(float i * x) / float (i * i))
+        if (abs step < eps) then sum, i
+        else
+            
+            // Показываем для отладки значение каждого члена ряда
+            //printfn "i = %d, sum = %f, step = %f" i sum step
+            //printfn "smart"
+            loop (i + 1) step (step + sum)
+    loop 1 1.0 0.0
+
+let mutable x = System.Math.PI / 5.0//a
+let eps = 0.005
+printfn "|    x    |  Builtin   |   Smart  | # terms | Dumb Taylor | # terms |"
+while (System.Math.PI / 5.0 <= x) && (x <= System.Math.PI) do//от а до b
+    x <- x + eps
+    let tailsum0, tail_i0 = (builtin x eps)
+    let tailsum, tail_i = (taylor_naive x eps)
+    let tailsum1, tail_i1 = (taylor_smart x eps)
+    printfn "| %f| %f  | %f|    %d    |  %f  |    %d    |" x tailsum0 tailsum1 tail_i1 tailsum tail_i 
