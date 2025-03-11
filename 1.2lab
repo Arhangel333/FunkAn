@@ -1,0 +1,64 @@
+open System
+
+// Метод дихотомии
+let dichotomy f a b eps =
+    let rec loop a b =
+        let c = (a + b) / 2.0
+        if abs (f c) < eps || abs (b - a) < eps then
+            c
+        else
+            if f a * f c < 0.0 then loop a c else loop c b
+    loop a b
+
+// Метод итераций
+let iterations f phi x0 eps =
+    let rec loop x =
+        let xNext = phi x
+        if abs (xNext - x) < eps then
+            xNext
+        else
+            loop xNext
+    loop x0
+
+// Метод Ньютона
+let newton f f' x0 eps =
+    let rec loop x =
+        let xNext = x - f x / f' x
+        if abs (xNext - x) < eps then
+            xNext
+        else
+            loop xNext
+    loop x0
+
+// Функции для уравнения 26: e^x - e^{-x} - 2 = 0
+let f26 x = exp x - exp (-x) - 2.0
+let f26' x = exp x + exp (-x) // Производная
+
+// Функции для уравнения 27: sin(ln x) - cos(ln x) + 2ln x = 0
+let f27 x = sin (log x) - cos (log x) + 2.0 * log x
+
+// Функции для уравнения 28: x - 2 + sin(1/x) = 0
+let f28 x = x - 2.0 + sin (1.0 / x)
+let phi28 x = 2.0 - sin (1.0 / x) // Итерационная функция
+
+// Параметры
+let eps = 1e-10
+
+// Решение уравнения 26 (Метод Ньютона)
+let root26 = newton f26 f26' 0.5 eps
+
+// Решение уравнения 27 (Метод дихотомии)
+let root27 = dichotomy f27 1.0 3.0 eps
+
+// Решение уравнения 28 (Метод итераций)
+let root28 = iterations f28 phi28 1.5 eps
+
+// Вывод результатов
+printfn "Уравнение 26: e^x - e^{-x} - 2 = 0"
+printfn "Метод Ньютона: x = %.6f" root26
+
+printfn "\nУравнение 27: sin(ln x) - cos(ln x) + 2ln x = 0"
+printfn "Метод дихотомии: x = %.6f" root27
+
+printfn "\nУравнение 28: x - 2 + sin(1/x) = 0"
+printfn "Метод итераций: x = %.6f" root28
